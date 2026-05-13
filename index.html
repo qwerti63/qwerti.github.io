@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DearkVPN — приватный VPN с обходом блокировок</title>
+    <meta name="description" content="DearkVPN — VLESS, REALITY, Amnezia. Оплата Telegram Stars. 50⭐ — 30 дней, 90⭐ — 60 дней. Безлимит, обход белых списков.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Кислотно-зеленый акцент + глитч-переменные */
+        :root {
+            --accent: #39ff14;
+            --accent-glow: rgba(57, 255, 20, 0.2);
+            --accent-dark: #2ecc10;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --border: #222;
+        }
+
+        /* === 3D КАНВАС ФОН === */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+
+        /* Контент поверх канваса */
+        .content, .menu, .burger, .toast, .menu-overlay {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Улучшаем читаемость на фоне */
+        .card, .tariff-card, .tab-content, .support-buttons a, .badge, .code-block {
+            backdrop-filter: blur(2px);
+            background: rgba(17, 17, 17, 0.85);
+        }
+
+        /* Глитч-анимация для заголовка */
+        .glitch {
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            position: relative;
+            text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75);
+            animation: glitch-shake 0.3s infinite alternate;
+        }
+
+        .glitch span {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        @keyframes glitch-shake {
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Глитч для акцентных кнопок при ховере */
+        .btn-primary {
+            transition: 0.1s linear;
+        }
+        .btn-primary:hover {
+            animation: glitch-btn 0.2s infinite;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+        }
+        @keyframes glitch-btn {
+            0% { transform: skew(0deg, 0deg); opacity: 1; text-shadow: 0 0 0 var(--accent);}
+            25% { transform: skew(1deg, 0.5deg); text-shadow: -1px 0 red; }
+            75% { transform: skew(-1deg, -0.5deg); text-shadow: 1px 0 cyan; }
+            100% { transform: skew(0deg, 0deg);}
+        }
+
+        /* Мерцающий текст для акцентов */
+        .accent-glow {
+            color: var(--accent);
+            animation: flicker 3s infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 2px var(--accent);}
+            50% { opacity: 0.8; text-shadow: 0 0 8px var(--accent);}
+        }
+
+        /* Адаптив для глитч-заголовка */
+        @media (max-width: 700px) {
+            .glitch {
+                font-size: 36px;
+            }
+        }
+
+        /* Остальные стили без изменений, кроме фона карточек (уже прозрачнее) */
+        .burger {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 200;
+            cursor: pointer;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            transition: 0.2s;
+        }
+        .burger:hover {
+            border-color: var(--accent);
+        }
+        .burger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border);
+            z-index: 150;
+            transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 80px 24px 24px;
+        }
+        .menu.open {
+            left: 0;
+        }
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 140;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 14px 16px;
+            margin: 8px 0;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .menu-item:hover {
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--accent);
+        }
+        .menu-item.active {
+            background: rgba(57, 255, 20, 0.15);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+        .content {
+            min-height: 100vh;
+            transition: opacity 0.2s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px 60px;
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .hero h1 {
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 20px;
+            color: #ddd;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        .badge {
+            background: rgba(57, 255, 20, 0.15);
+            border: 1px solid rgba(57, 255, 20, 0.4);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent);
+            backdrop-filter: blur(4px);
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin: 50px 0;
+        }
+        .card {
+            background: rgba(17, 17, 17, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px 24px;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            background: rgba(20, 20, 20, 0.9);
+        }
+        .card-icon {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .card p {
+            color: #ccc;
+        }
+        .tariff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin: 40px 0;
+        }
+        .tariff-card {
+            background: rgba(17, 17, 17, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .tariff-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+        .tariff-stars {
+            font-size: 52px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd966, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 16px 0;
+        }
+        .tariff-days {
+            font-size: 18px;
+            color: #ccc;
+            margin: 16px 0;
+        }
+        .feature-list {
+            margin: 30px 0;
+            text-align: left;
+            display: inline-block;
+        }
+        .feature-list li {
+            margin: 10px 0;
+            color: #bbb;
+            list-style: none;
+            padding-left: 24px;
+            position: relative;
+        }
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 28px;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: rgba(17, 17, 17, 0.9);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #ccc;
+            font-weight: 500;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+        .tab-content {
+            display: none;
+            background: rgba(17, 17, 17, 0.9);
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .code-block {
+            background: #1a1a1a;
+            padding: 16px;
+            border-radius: 12px;
+            font-family: monospace;
+            margin: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid #333;
+        }
+        .copy-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 300;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .section-sub {
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        .support-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        @media (max-width: 700px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            .container {
+                padding: 70px 20px 40px;
+            }
+            .menu {
+                width: 260px;
+            }
+        }
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+        }
+    </style>
+    <!-- Three.js библиотека -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+</head>
+<body>
+
+<canvas id="canvas-bg"></canvas>
+
+<div class="burger" id="burgerBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu" id="menu">
+    <button class="menu-item active" data-page="home">🏠 Главная</button>
+    <button class="menu-item" data-page="tariffs">⭐ Тарифы</button>
+    <button class="menu-item" data-page="guide">📖 Инструкция</button>
+    <button class="menu-item" data-page="support">💬 Поддержка</button>
+</div>
+
+<div class="content" id="content">
+    <div class="container" id="pageContainer"></div>
+</div>
+
+<div class="toast" id="toast">✅ Скопировано!</div>
+
+<script type="module">
+    import * as THREE from 'three';
+
+    // --- 3D СФЕРА С СЕРВЕРАМИ (эффект 25) ---
+    const canvas = document.getElementById('canvas-bg');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
+    const scene = new THREE.Scene();
+    scene.background = null; // прозрачный фон
+    
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 12);
+    camera.lookAt(0, 0, 0);
+    
+    // Группа для вращения
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
+    
+    // Сфера-скелет (полупрозрачная)
+    const geometry = new THREE.SphereGeometry(3, 64, 64);
+    const material = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true, transparent: true, opacity: 0.15 });
+    const wireframeSphere = new THREE.Mesh(geometry, material);
+    globeGroup.add(wireframeSphere);
+    
+    // Внутреннее свечение - точки (имитация серверов)
+    const pointsGeometry = new THREE.BufferGeometry();
+    const pointsCount = 180;
+    const positions = new Float32Array(pointsCount * 3);
+    for (let i = 0; i < pointsCount; i++) {
+        // случайные точки на сфере
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const r = 3.05;
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+        positions[i*3] = x;
+        positions[i*3+1] = y;
+        positions[i*3+2] = z;
+    }
+    pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const pointsMaterial = new THREE.PointsMaterial({ color: 0x39ff14, size: 0.08, transparent: true, blending: THREE.AdditiveBlending });
+    const serverPoints = new THREE.Points(pointsGeometry, pointsMaterial);
+    globeGroup.add(serverPoints);
+    
+    // Добавим дополнительный ореол – частицы вокруг
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 800;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+        starPositions[i*3] = (Math.random() - 0.5) * 200;
+        starPositions[i*3+1] = (Math.random() - 0.5) * 100;
+        starPositions[i*3+2] = (Math.random() - 0.5) * 60 - 30;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0x88ff88, size: 0.05, transparent: true, opacity: 0.4 });
+    const starsField = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starsField);
+    
+    // Маленькие вращающиеся кольца
+    const ringGeo = new THREE.TorusGeometry(3.2, 0.03, 64, 300);
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x226611 });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2;
+    globeGroup.add(ring);
+    
+    const ring2Geo = new THREE.TorusGeometry(3.4, 0.02, 64, 300);
+    const ring2Mat = new THREE.MeshStandardMaterial({ color: 0x88ff44, emissive: 0x116600 });
+    const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+    ring2.rotation.z = Math.PI / 3;
+    ring2.rotation.x = Math.PI / 3;
+    globeGroup.add(ring2);
+    
+    // Свет
+    const ambientLight = new THREE.AmbientLight(0x111111);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0x39ff14, 0.5, 20);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+    const backLight = new THREE.PointLight(0x226622, 0.3);
+    backLight.position.set(-3, -2, -4);
+    scene.add(backLight);
+    
+    let time = 0;
+    
+    function animate3d() {
+        requestAnimationFrame(animate3d);
+        time += 0.005;
+        globeGroup.rotation.y = time * 0.4;
+        globeGroup.rotation.x = Math.sin(time * 0.2) * 0.2;
+        ring.rotation.z += 0.008;
+        ring2.rotation.x += 0.005;
+        ring2.rotation.y += 0.007;
+        starsField.rotation.y += 0.0005;
+        starsField.rotation.x += 0.0003;
+        
+        camera.position.x = Math.sin(time * 0.1) * 0.5;
+        camera.position.y = 2 + Math.sin(time * 0.3) * 0.2;
+        camera.lookAt(0, 0, 0);
+        
+        renderer.render(scene, camera);
+    }
+    animate3d();
+    
+    window.addEventListener('resize', onWindowResize, false);
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+</script>
+
+<script>
+    // --- 24 : анимированный градиентный фон добавим через CSS динамический (и так есть канвас, но добавим дополнительный радиальный градиент поверх?)
+    // Улучшим: зададим body background градиент с движением
+    const style = document.createElement('style');
+    style.textContent = `
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(10,20,5,0.8), rgba(0,0,0,0.95));
+            z-index: -2;
+            pointer-events: none;
+            animation: gradientShift 12s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background: radial-gradient(circle at 30% 40%, #0a1505, #000000);}
+            50% { background: radial-gradient(circle at 70% 60%, #102008, #020202);}
+            100% { background: radial-gradient(circle at 30% 40%, #0a1505, #000000);}
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Страницы как раньше
+    const pages = {
+        home: `
+            <section class="hero">
+                <div class="badge">⚡ Обход белых списков • Без логов • Telegram Stars</div>
+                <h1 class="glitch">DearkVPN — свобода <br> без компромиссов</h1>
+                <p>Современные протоколы VLESS, REALITY, Amnezia. Работает там, где другие VPN блокируют.</p>
+                <div class="btn-group">
+                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">🤖 Перейти в бота</a>
+                    <button class="btn-secondary" id="toTariffsBtn">📦 Выбрать тариф</button>
+                </div>
+            </section>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h3>VLESS + REALITY</h3>
+                    <p>Маскировка под обычный HTTPS. Невозможно обнаружить и заблокировать.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌀</div>
+                    <h3>Amnezia</h3>
+                    <p>Обфускация, скрывающая VPN от DPI. Идеально для стран с белыми списками.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Высокая скорость</h3>
+                    <p>Прямые маршруты, оптимизированные серверы. 4K, игры, звонки.</p>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0;">
+                <span style="background: rgba(17,17,17,0.8); padding: 8px 20px; border-radius: 40px;">✅ Безлимитный трафик</span>
+                <span style="background: rgba(17,17,17,0.8); padding: 8px 20px; border-radius: 40px;">🚫 Нет логов</span>
+                <span style="background: rgba(17,17,17,0.8); padding: 8px 20px; border-radius: 40px;">📱 Все устройства</span>
+                <span style="background: rgba(17,17,17,0.8); padding: 8px 20px; border-radius: 40px;">⚡ Обход DPI</span>
+            </div>
+        `,
+        tariffs: `
+            <h2 class="section-title">Оплата Telegram Stars</h2>
+            <p class="section-sub">Пополнение через Telegram — быстро, безопасно, без комиссии</p>
+            <div class="tariff-grid">
+                <div class="tariff-card">
+                    <div class="tariff-stars">⭐ 50 Stars</div>
+                    <div class="tariff-days">📆 30 дней подписки</div>
+                    <ul class="feature-list">
+                        <li>Безлимитный трафик</li>
+                        <li>VLESS/REALITY/Amnezia</li>
+                        <li>Обход белых списков</li>
+                        <li>Поддержка 24/7</li>
+                    </ul>
+                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">Оплатить 50⭐</a>
+                </div>
+                <div class="tariff-card">
+                    <div class="tariff-stars">⭐ 90 Stars</div>
+                    <div class="tariff-days">📆 60 дней подписки</div>
+                    <ul class="feature-list">
+                        <li>Безлимитный трафик</li>
+                        <li>VLESS/REALITY/Amnezia</li>
+                        <li>Обход белых списков</li>
+                        <li>Экономия 10⭐</li>
+                    </ul>
+                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">Оплатить 90⭐</a>
+                </div>
+            </div>
+        `,
+        guide: `
+            <h2 class="section-title">Инструкция по подключению</h2>
+            <div class="tabs" id="tabsContainer">
+                <button class="tab-btn active" data-os="android">📱 Android</button>
+                <button class="tab-btn" data-os="ios">🍏 iOS</button>
+                <button class="tab-btn" data-os="windows">💻 Windows</button>
+                <button class="tab-btn" data-os="mac">🍎 macOS</button>
+                <button class="tab-btn" data-os="linux">🐧 Linux</button>
+            </div>
+            <div id="tabContent"></div>
+        `,
+        support: `
+            <h2 class="section-title">Поддержка и контакты</h2>
+            <p class="section-sub">Мы всегда на связи в Telegram</p>
+            <div class="support-buttons">
+                <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">🤖 Бот для оплаты</a>
+                <a href="https://t.me/dearkvpn" target="_blank" class="btn-secondary">📢 Новостной канал</a>
+                <a href="https://t.me/dearkvpn" target="_blank" class="btn-secondary">💬 Чат поддержки</a>
+            </div>
+            <div style="background: rgba(17,17,17,0.85); border-radius: 24px; padding: 32px; margin-top: 48px; text-align: center; border: 1px solid #222;">
+                <h3 style="margin-bottom: 16px;">Не нашли ответ?</h3>
+                <p style="color: #aaa; margin-bottom: 24px;">Напишите нам в Telegram — ответим в течение часа</p>
+                <a href="https://t.me/dearkvpn" target="_blank" class="btn-primary">Написать в поддержку</a>
+            </div>
+        `
+    };
+
+    const guideData = {
+        android: { app: "NekoRay / v2rayNG / Hiddify", steps: ["Скачайте приложение из Google Play или с официального сайта", "Откройте бота @dearkvpn_bot и оплатите подписку", "Бот пришлёт конфиг — скачайте файл", "В приложении нажмите «Импорт» и выберите полученный файл", "Включите VPN"], command: "конфиг-файл.conf" },
+        ios: { app: "Shadowrocket / Streisand / V2Box", steps: ["Установите приложение из App Store", "Перейдите в бот @dearkvpn_bot, оплатите подписку", "Бот пришлёт ссылку — нажмите на неё", "Приложение откроется автоматически, сохраните конфиг", "Подключитесь"], command: "ссылка-на-конфиг" },
+        windows: { app: "v2rayN / Nekoray / Hiddify", steps: ["Скачайте v2rayN с GitHub", "Распакуйте и запустите", "Получите конфиг у бота @dearkvpn_bot", "Перетащите файл в окно v2rayN", "Нажмите Enter → Подключиться"], command: "v2rayN.exe" },
+        mac: { app: "V2RayX / Nekoray / Hiddify", steps: ["Установите Nekoray для macOS", "Откройте бота, оплатите, получите конфиг", "В Nekoray: Profile → Import → Выберите файл", "Нажмите Connect"], command: "nekoray.dmg" },
+        linux: { app: "Nekoray / v2rayA / Qv2ray", steps: ["Установите Nekoray (apt / pacman / сборка)", "Запустите, получите конфиг у бота", "Импортируйте файл (Перетащите в окно)", "Включите туннель"], command: "nekoray.AppImage" }
+    };
+
+    let currentPage = "home";
+    function attachCopyEvents() {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const text = btn.getAttribute('data-copy');
+                navigator.clipboard.writeText(text);
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1500);
+            });
+        });
+    }
+
+    function renderGuide(os) {
+        const data = guideData[os];
+        const content = `<div style="margin-bottom:24px"><h3 style="color: var(--accent);">📱 Приложение: ${data.app}</h3></div>
+            <div style="background:#1a1a1a; border-radius:20px; padding:20px">
+            <h4 style="margin-bottom:16px">Пошаговая инструкция:</h4>
+            <ol style="margin-left:20px;color:#ccc;line-height:1.8">${data.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+            <div class="code-block"><span>📁 ${data.command}</span><button class="copy-btn" data-copy="${data.command}">Копировать</button></div>
+            <p style="color:#aaa;margin-top:16px">💡 Не получается? Напишите в поддержку — поможем!</p></div>`;
+        document.getElementById("tabContent").innerHTML = content;
+        attachCopyEvents();
+    }
+
+    function loadPage(page) {
+        currentPage = page;
+        document.getElementById('pageContainer').innerHTML = pages[page];
+        if (page === 'guide') {
+            renderGuide('android');
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderGuide(btn.getAttribute('data-os'));
+                });
+            });
+        }
+        if (page === 'home') {
+            const btn = document.getElementById('toTariffsBtn');
+            if (btn) btn.addEventListener('click', () => changePage('tariffs'));
+        }
+        document.querySelectorAll('.menu-item').forEach(item => {
+            if (item.getAttribute('data-page') === page) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changePage(page) {
+        closeMenu();
+        loadPage(page);
+        history.pushState(null, '', `#${page}`);
+    }
+
+    function closeMenu() { document.getElementById('menu').classList.remove('open'); document.getElementById('menuOverlay').classList.remove('open'); }
+    function openMenu() { document.getElementById('menu').classList.add('open'); document.getElementById('menuOverlay').classList.add('open'); }
+
+    document.getElementById('burgerBtn').addEventListener('click', openMenu);
+    document.getElementById('menuOverlay').addEventListener('click', closeMenu);
+    document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('click', () => changePage(btn.getAttribute('data-page'))));
+
+    const hash = window.location.hash.slice(1);
+    loadPage(hash && pages[hash] ? hash : 'home');
+    window.addEventListener('popstate', () => { const h = window.location.hash.slice(1); loadPage(h && pages[h] ? h : 'home'); });
+</script>
+</body>
+  </html>
