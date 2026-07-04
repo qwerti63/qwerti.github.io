@@ -2,9 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>DearkVPN — приватный VPN с обходом блокировок</title>
-    <meta name="description" content="DearkVPN — VLESS, REALITY, Amnezia. Оплата Telegram Stars. 50⭐ — 30 дней, 60⭐ — 60 дней. Безлимит, обход белых списков.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q — Мессенджер нового поколения</title>
     <style>
         * {
             margin: 0;
@@ -13,866 +12,391 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #e5e5e5;
-            line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0D0D0D;
+            color: #FFFFFF;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
-        :root {
-            --accent: #39ff14;
-            --accent-glow: rgba(57, 255, 20, 0.2);
-            --accent-dark: #2ecc10;
-            --bg-dark: #0a0a0a;
-            --bg-card: #111111;
-            --border: #222;
-        }
-
-        /* SVG иконки базовые стили */
-        .icon {
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-        .icon-lg {
-            width: 28px;
-            height: 28px;
-        }
-        .icon-xl {
-            width: 42px;
-            height: 42px;
-        }
-        .icon-accent {
-            stroke: var(--accent);
-            fill: none;
-        }
-        .icon-accent-fill {
-            fill: var(--accent);
-            stroke: none;
-        }
-        .icon-white {
-            stroke: #fff;
-            fill: none;
-        }
-        .icon-glow {
-            filter: drop-shadow(0 0 3px var(--accent));
-        }
-
-        /* 3D КАНВАС ФОН */
-        #canvas-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.35;
-        }
-
-        .content, .menu, .burger, .toast, .menu-overlay {
-            position: relative;
-            z-index: 10;
-        }
-
-        .card, .tariff-card, .tab-content, .support-buttons a, .badge, .code-block {
-            backdrop-filter: blur(2px);
-            background: rgba(17, 17, 17, 0.85);
-        }
-
-        /* Глитч-анимация */
-        .glitch {
-            font-size: 52px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            position: relative;
-            text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75);
-            animation: glitch-shake 0.3s infinite alternate;
-        }
-
-        @keyframes glitch-shake {
-            0% { transform: translate(0); }
-            20% { transform: translate(-1px, 1px); }
-            40% { transform: translate(-1px, -1px); }
-            60% { transform: translate(1px, 1px); }
-            80% { transform: translate(1px, -1px); }
-            100% { transform: translate(0); }
-        }
-
-        .btn-primary {
-            transition: 0.1s linear;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-primary:hover {
-            animation: glitch-btn 0.2s infinite;
-            background: var(--accent);
-            box-shadow: 0 0 12px var(--accent);
-        }
-        @keyframes glitch-btn {
-            0% { transform: skew(0deg, 0deg);}
-            25% { transform: skew(1deg, 0.5deg);}
-            75% { transform: skew(-1deg, -0.5deg);}
-            100% { transform: skew(0deg, 0deg);}
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(10,20,5,0.8), rgba(0,0,0,0.95));
-            z-index: -2;
-            pointer-events: none;
-            animation: gradientShift 12s ease infinite;
-        }
-        @keyframes gradientShift {
-            0% { background: radial-gradient(circle at 30% 40%, #0a1505, #000000);}
-            50% { background: radial-gradient(circle at 70% 60%, #102008, #020202);}
-            100% { background: radial-gradient(circle at 30% 40%, #0a1505, #000000);}
-        }
-
-        .burger {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            z-index: 200;
-            cursor: pointer;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            transition: 0.2s;
-        }
-        .burger:hover {
-            border-color: var(--accent);
-        }
-        .burger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: #fff;
-            margin: 5px 0;
-            transition: 0.3s;
-            border-radius: 2px;
-        }
-        .menu {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background: rgba(13, 13, 13, 0.95);
-            backdrop-filter: blur(12px);
-            border-right: 1px solid var(--border);
-            z-index: 150;
-            transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            padding: 80px 24px 24px;
-        }
-        .menu.open {
-            left: 0;
-        }
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 140;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.3s;
-        }
-        .menu-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 14px 16px;
-            margin: 8px 0;
-            background: transparent;
-            border: none;
-            color: #ccc;
-            font-size: 18px;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer;
-            border-radius: 12px;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-        .menu-item:hover {
-            background: rgba(57, 255, 20, 0.1);
-            color: var(--accent);
-        }
-        .menu-item:hover .icon-white {
-            stroke: var(--accent);
-        }
-        .menu-item.active {
-            background: rgba(57, 255, 20, 0.15);
-            color: var(--accent);
-            border-left: 3px solid var(--accent);
-        }
-        .menu-item.active .icon-white {
-            stroke: var(--accent);
-        }
-        .content {
-            min-height: 100vh;
-            transition: opacity 0.2s;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 24px 60px;
-        }
-        .hero {
-            text-align: center;
-            padding: 40px 0;
-        }
-        .hero h1 {
-            margin-bottom: 20px;
-        }
-        .hero p {
-            font-size: 20px;
-            color: #ddd;
-            max-width: 650px;
-            margin: 0 auto;
-        }
-        .badge {
-            background: rgba(57, 255, 20, 0.15);
-            border: 1px solid rgba(57, 255, 20, 0.4);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            color: var(--accent);
-            backdrop-filter: blur(4px);
-        }
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin: 50px 0;
-        }
-        .card {
-            background: rgba(17, 17, 17, 0.85);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 32px 24px;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-            text-align: center;
-        }
-        .card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            background: rgba(20, 20, 20, 0.9);
-        }
-        .card-icon {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .card h3 {
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-        .card p {
-            color: #ccc;
-        }
-        .tariff-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-            margin: 40px 0;
-        }
-        .tariff-card {
-            background: rgba(17, 17, 17, 0.85);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 32px 24px;
-            text-align: center;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-        }
-        .tariff-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-        }
-        .tariff-stars {
-            font-size: 52px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffd966, #ffb347);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin: 16px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .tariff-days {
-            font-size: 18px;
-            color: #ccc;
-            margin: 16px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .feature-list {
-            margin: 30px 0;
-            text-align: left;
-            display: inline-block;
-        }
-        .feature-list li {
-            margin: 10px 0;
-            color: #bbb;
-            list-style: none;
-            padding-left: 28px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .feature-list li::before {
-            content: "";
-            position: absolute;
-            left: 0;
-        }
-        .btn-primary {
-            background: var(--accent);
-            color: #000;
-            padding: 14px 32px;
-            border-radius: 40px;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-primary:hover {
-            background: var(--accent-dark);
-            transform: scale(0.98);
-        }
-        .btn-secondary {
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            border: 1px solid #444;
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 28px;
-        }
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 32px;
-            justify-content: center;
-        }
-        .tab-btn {
-            background: rgba(17, 17, 17, 0.9);
-            border: 1px solid var(--border);
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #ccc;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .tab-btn.active {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-        .tab-btn.active .icon-white {
-            stroke: #000;
-        }
-        .tab-content {
-            display: none;
-            background: rgba(17, 17, 17, 0.9);
-            border-radius: 24px;
-            padding: 28px;
-            border: 1px solid var(--border);
-            backdrop-filter: blur(4px);
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .code-block {
-            background: #1a1a1a;
-            padding: 16px;
-            border-radius: 12px;
-            font-family: monospace;
-            margin: 16px 0;
+        /* Шапка */
+        .header {
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            border: 1px solid #333;
-        }
-        .copy-btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        .toast {
             position: fixed;
-            bottom: 24px;
+            width: 100%;
+            top: 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #E53935;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav a {
+            color: #888;
+            text-decoration: none;
+            margin-left: 32px;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #E53935;
+        }
+
+        /* Герой */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            opacity: 0;
-            transition: 0.2s;
-            z-index: 300;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(229, 57, 53, 0.15) 0%, transparent 70%);
             pointer-events: none;
         }
-        .toast.show {
-            opacity: 1;
+
+        .hero-logo {
+            width: 120px;
+            height: 120px;
+            background: #E53935;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(229, 57, 53, 0.3);
+            animation: float 3s ease-in-out infinite;
         }
-        .section-title {
-            font-size: 36px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .section-sub {
-            text-align: center;
-            color: #ccc;
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: #E53935;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #888;
+            max-width: 500px;
             margin-bottom: 40px;
         }
-        .support-buttons {
+
+        .btn-download {
+            background: #E53935;
+            color: white;
+            border: none;
+            padding: 18px 48px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-download:hover {
+            background: #C62828;
+            transform: scale(1.05);
+        }
+
+        .btn-download.soon {
+            background: #333;
+            cursor: not-allowed;
+        }
+
+        /* Фичи */
+        .features {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .feature {
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            border-color: #E53935;
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(229, 57, 53, 0.1);
+            border-radius: 12px;
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        .feature-tag {
-            background: rgba(17,17,17,0.8);
-            padding: 8px 20px;
-            border-radius: 40px;
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
-        @media (max-width: 700px) {
-            .glitch {
+
+        .feature h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .feature p {
+            color: #888;
+            font-size: 15px;
+        }
+
+        /* Скриншот */
+        .showcase {
+            padding: 100px 40px;
+            text-align: center;
+        }
+
+        .showcase h2 {
+            font-size: 36px;
+            margin-bottom: 60px;
+        }
+
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: #141414;
+            border: 3px solid #333;
+            border-radius: 40px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #0D0D0D;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .mockup-logo {
+            width: 80px;
+            height: 80px;
+            background: #E53935;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .mockup-input {
+            width: 80%;
+            height: 48px;
+            background: #1C1C1E;
+            border-radius: 16px;
+            border: 1px solid #333;
+        }
+
+        .mockup-btn {
+            width: 80%;
+            height: 48px;
+            background: #E53935;
+            border-radius: 24px;
+        }
+
+        /* Футер */
+        .footer {
+            border-top: 1px solid #222;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            margin: 0 16px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #E53935;
+        }
+
+        .footer p {
+            color: #555;
+            font-size: 13px;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .hero h1 {
                 font-size: 36px;
             }
-            .container {
-                padding: 70px 20px 40px;
+            
+            .nav {
+                display: none;
             }
-            .menu {
-                width: 260px;
+            
+            .features {
+                padding: 60px 20px;
             }
-        }
-        .footer {
-            border-top: 1px solid var(--border);
-            padding: 32px 0;
-            text-align: center;
-            margin-top: 60px;
-            color: #666;
         }
     </style>
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
-            }
-        }
-    </script>
 </head>
 <body>
 
-<canvas id="canvas-bg"></canvas>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">Q</div>
+            <div class="logo-text">Q</div>
+        </div>
+        <nav class="nav">
+            <a href="#features">Возможности</a>
+            <a href="#privacy">Приватность</a>
+            <a href="https://deark.ru/privacy.html">Политика</a>
+            <a href="https://deark.ru/terms.html">Соглашение</a>
+        </nav>
+    </header>
 
-<div class="burger" id="burgerBtn">
-    <span></span>
-    <span></span>
-    <span></span>
-</div>
+    <!-- Герой -->
+    <section class="hero">
+        <div class="hero-logo">Q</div>
+        <h1>Мессенджер <span>Q</span></h1>
+        <p>Быстрый. Безопасный. Минималистичный. Общение без лишнего.</p>
+        <a href="#" class="btn-download soon">Скоро в Google Play</a>
+    </section>
 
-<div class="menu-overlay" id="menuOverlay"></div>
-
-<div class="menu" id="menu">
-    <button class="menu-item active" data-page="home">
-        <svg class="icon icon-white" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z"/></svg>
-        Главная
-    </button>
-    <button class="menu-item" data-page="tariffs">
-        <svg class="icon icon-white" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Тарифы
-    </button>
-    <button class="menu-item" data-page="guide">
-        <svg class="icon icon-white" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        Инструкция
-    </button>
-    <button class="menu-item" data-page="support">
-        <svg class="icon icon-white" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        Поддержка
-    </button>
-</div>
-
-<div class="content" id="content">
-    <div class="container" id="pageContainer"></div>
-</div>
-
-<div class="toast" id="toast">✓ Скопировано!</div>
-
-<script type="module">
-    import * as THREE from 'three';
-
-    const canvas = document.getElementById('canvas-bg');
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    
-    const scene = new THREE.Scene();
-    scene.background = null;
-    
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 2, 12);
-    camera.lookAt(0, 0, 0);
-    
-    const globeGroup = new THREE.Group();
-    scene.add(globeGroup);
-    
-    const geometry = new THREE.SphereGeometry(3, 64, 64);
-    const material = new THREE.MeshBasicMaterial({ color: 0x39ff14, wireframe: true, transparent: true, opacity: 0.15 });
-    const wireframeSphere = new THREE.Mesh(geometry, material);
-    globeGroup.add(wireframeSphere);
-    
-    const pointsGeometry = new THREE.BufferGeometry();
-    const pointsCount = 180;
-    const positions = new Float32Array(pointsCount * 3);
-    for (let i = 0; i < pointsCount; i++) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const r = 3.05;
-        positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-        positions[i*3+2] = r * Math.cos(phi);
-    }
-    pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const pointsMaterial = new THREE.PointsMaterial({ color: 0x39ff14, size: 0.08, transparent: true, blending: THREE.AdditiveBlending });
-    const serverPoints = new THREE.Points(pointsGeometry, pointsMaterial);
-    globeGroup.add(serverPoints);
-    
-    const starGeometry = new THREE.BufferGeometry();
-    const starCount = 800;
-    const starPositions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount; i++) {
-        starPositions[i*3] = (Math.random() - 0.5) * 200;
-        starPositions[i*3+1] = (Math.random() - 0.5) * 100;
-        starPositions[i*3+2] = (Math.random() - 0.5) * 60 - 30;
-    }
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starMaterial = new THREE.PointsMaterial({ color: 0x88ff88, size: 0.05, transparent: true, opacity: 0.4 });
-    const starsField = new THREE.Points(starGeometry, starMaterial);
-    scene.add(starsField);
-    
-    const ringGeo = new THREE.TorusGeometry(3.2, 0.03, 64, 300);
-    const ringMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x226611 });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2;
-    globeGroup.add(ring);
-    
-    const ring2Geo = new THREE.TorusGeometry(3.4, 0.02, 64, 300);
-    const ring2Mat = new THREE.MeshStandardMaterial({ color: 0x88ff44, emissive: 0x116600 });
-    const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
-    ring2.rotation.z = Math.PI / 3;
-    ring2.rotation.x = Math.PI / 3;
-    globeGroup.add(ring2);
-    
-    const ambientLight = new THREE.AmbientLight(0x111111);
-    scene.add(ambientLight);
-    const pointLight = new THREE.PointLight(0x39ff14, 0.5, 20);
-    pointLight.position.set(5, 5, 5);
-    scene.add(pointLight);
-    const backLight = new THREE.PointLight(0x226622, 0.3);
-    backLight.position.set(-3, -2, -4);
-    scene.add(backLight);
-    
-    let time = 0;
-    function animate3d() {
-        requestAnimationFrame(animate3d);
-        time += 0.005;
-        globeGroup.rotation.y = time * 0.4;
-        globeGroup.rotation.x = Math.sin(time * 0.2) * 0.2;
-        ring.rotation.z += 0.008;
-        ring2.rotation.x += 0.005;
-        ring2.rotation.y += 0.007;
-        starsField.rotation.y += 0.0005;
-        starsField.rotation.x += 0.0003;
-        camera.position.x = Math.sin(time * 0.1) * 0.5;
-        camera.position.y = 2 + Math.sin(time * 0.3) * 0.2;
-        camera.lookAt(0, 0, 0);
-        renderer.render(scene, camera);
-    }
-    animate3d();
-    
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-</script>
-
-<script>
-    const pages = {
-        home: `
-            <section class="hero">
-                <div class="badge">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
-                    Обход белых списков • Без логов • Telegram Stars
-                </div>
-                <h1 class="glitch">DearkVPN — свобода <br> без компромиссов</h1>
-                <p>Современные протоколы VLESS, REALITY, Amnezia. Работает там, где другие VPN блокируют.</p>
-                <div class="btn-group">
-                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                        Перейти в бота
-                    </a>
-                    <button class="btn-secondary" id="toTariffsBtn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                        Выбрать тариф
-                    </button>
-                </div>
-            </section>
-
-            <div class="grid-3">
-                <div class="card">
-                    <div class="card-icon">
-                        <svg class="icon-xl icon-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </div>
-                    <h3>VLESS + REALITY</h3>
-                    <p>Маскировка под обычный HTTPS. Невозможно обнаружить и заблокировать.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">
-                        <svg class="icon-xl icon-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
-                    </div>
-                    <h3>Amnezia</h3>
-                    <p>Обфускация, скрывающая VPN от DPI. Идеально для стран с белыми списками.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">
-                        <svg class="icon-xl icon-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>
-                    </div>
-                    <h3>Высокая скорость</h3>
-                    <p>Прямые маршруты, оптимизированные серверы. 4K, игры, звонки.</p>
-                </div>
+    <!-- Фичи -->
+    <section class="features" id="features">
+        <h2>Почему <span style="color: #E53935">Q</span>?</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Безопасность</h3>
+                <p>Все сообщения шифруются. Никто кроме вас и собеседника не прочитает переписку.</p>
             </div>
-
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 20px 0;">
-                <span class="feature-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M20 6L9 17L4 12"/></svg>Безлимитный трафик</span>
-                <span class="feature-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Нет логов</span>
-                <span class="feature-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Все устройства</span>
-                <span class="feature-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>Обход DPI</span>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Скорость</h3>
+                <p>Мгновенная доставка сообщений. Работает даже на медленном интернете.</p>
             </div>
-        `,
-        tariffs: `
-            <h2 class="section-title">Оплата Telegram Stars</h2>
-            <p class="section-sub">Пополнение через Telegram — быстро, безопасно, без комиссии</p>
-            <div class="tariff-grid">
-                <div class="tariff-card">
-                    <div class="tariff-stars">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="gold" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        50 Stars
-                    </div>
-                    <div class="tariff-days">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        30 дней подписки
-                    </div>
-                    <ul class="feature-list">
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M20 6L9 17L4 12"/></svg>Безлимитный трафик</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>VLESS/REALITY/Amnezia</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>Обход белых списков</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Поддержка 24/7</li>
-                    </ul>
-                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">Оплатить 50⭐</a>
-                </div>
-
-                <div class="tariff-card">
-                    <div class="tariff-stars">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="gold" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        90 Stars
-                    </div>
-                    <div class="tariff-days">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        60 дней подписки
-                    </div>
-                    <ul class="feature-list">
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M20 6L9 17L4 12"/></svg>Безлимитный трафик</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>VLESS/REALITY/Amnezia</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><path d="M13 2L3 14h8l-2 8 10-12h-8l2-8z"/></svg>Обход белых списков</li>
-                        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Экономия 10⭐</li>
-                    </ul>
-                    <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">Оплатить 90⭐</a>
-                </div>
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Минимализм</h3>
+                <p>Ничего лишнего. Только вы и ваши контакты. Чистый тёмный интерфейс.</p>
             </div>
-        `,
-        guide: `
-            <h2 class="section-title">Инструкция по подключению</h2>
-            <div class="tabs" id="tabsContainer">
-                <button class="tab-btn active" data-os="android"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Android</button>
-                <button class="tab-btn" data-os="ios"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>iOS</button>
-                <button class="tab-btn" data-os="windows"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 3 11 3 11 11 3 11"/><polygon points="13 3 21 3 21 11 13 11"/><polygon points="3 13 11 13 11 21 3 21"/><polygon points="13 13 21 13 21 21 13 21"/></svg>Windows</button>
-                <button class="tab-btn" data-os="mac"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/></svg>macOS</button>
-                <button class="tab-btn" data-os="linux"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Linux</button>
+            <div class="feature">
+                <div class="feature-icon">👤</div>
+                <h3>Анонимность</h3>
+                <p>Регистрация по email. Не нужен номер телефона и личные данные.</p>
             </div>
-            <div id="tabContent"></div>
-        `,
-        support: `
-            <h2 class="section-title">Поддержка и контакты</h2>
-            <p class="section-sub">Мы всегда на связи в Telegram</p>
-            <div class="support-buttons">
-                <a href="https://t.me/dearkvpn_bot" target="_blank" class="btn-primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                    Бот для оплаты
-                </a>
-                <a href="https://t.me/dearkvpn" target="_blank" class="btn-secondary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l16 16M20 4L4 20"/></svg>
-                    Новостной канал
-                </a>
-                <a href="https://t.me/dearkvpn" target="_blank" class="btn-secondary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Чат поддержки
-                </a>
+            <div class="feature">
+                <div class="feature-icon">☁️</div>
+                <h3>Облако</h3>
+                <p>История сообщений хранится в облаке. Войди с любого устройства.</p>
             </div>
-            <div style="background: rgba(17,17,17,0.85); border-radius: 24px; padding: 32px; margin-top: 48px; text-align: center; border: 1px solid #222;">
-                <h3 style="margin-bottom: 16px;">Не нашли ответ?</h3>
-                <p style="color: #aaa; margin-bottom: 24px;">Напишите нам в Telegram — ответим в течение часа</p>
-                <a href="https://t.me/dearkvpn" target="_blank" class="btn-primary">Написать в поддержку</a>
+            <div class="feature">
+                <div class="feature-icon">🔔</div>
+                <h3>Уведомления</h3>
+                <p>Мгновенные push-уведомления. Не пропустите важное сообщение.</p>
             </div>
-        `
-    };
+        </div>
+    </section>
 
-    const guideData = {
-        android: { app: "NekoRay / v2rayNG / Hiddify", steps: ["Скачайте приложение из Google Play или с официального сайта", "Откройте бота @dearkvpn_bot и оплатите подписку", "Бот пришлёт конфиг — скачайте файл", "В приложении нажмите «Импорт» и выберите полученный файл", "Включите VPN"], command: "конфиг-файл.conf" },
-        ios: { app: "Shadowrocket / Streisand / V2Box", steps: ["Установите приложение из App Store", "Перейдите в бот @dearkvpn_bot, оплатите подписку", "Бот пришлёт ссылку — нажмите на неё", "Приложение откроется автоматически, сохраните конфиг", "Подключитесь"], command: "ссылка-на-конфиг" },
-        windows: { app: "v2rayN / Nekoray / Hiddify", steps: ["Скачайте v2rayN с GitHub", "Распакуйте и запустите", "Получите конфиг у бота @dearkvpn_bot", "Перетащите файл в окно v2rayN", "Нажмите Enter → Подключиться"], command: "v2rayN.exe" },
-        mac: { app: "V2RayX / Nekoray / Hiddify", steps: ["Установите Nekoray для macOS", "Откройте бота, оплатите, получите конфиг", "В Nekoray: Profile → Import → Выберите файл", "Нажмите Connect"], command: "nekoray.dmg" },
-        linux: { app: "Nekoray / v2rayA / Qv2ray", steps: ["Установите Nekoray (apt / pacman / сборка)", "Запустите, получите конфиг у бота", "Импортируйте файл (Перетащите в окно)", "Включите туннель"], command: "nekoray.AppImage" }
-    };
+    <!-- Скриншот -->
+    <section class="showcase">
+        <h2>Просто. Чисто. <span style="color: #E53935">Q</span>.</h2>
+        <div class="phone-mockup">
+            <div class="phone-screen">
+                <div class="mockup-logo">Q</div>
+                <div style="color: #888; font-size: 14px;">Добро пожаловать в Q</div>
+                <div class="mockup-input"></div>
+                <div class="mockup-input"></div>
+                <div class="mockup-btn"></div>
+            </div>
+        </div>
+    </section>
 
-    let currentPage = "home";
-    function attachCopyEvents() {
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const text = btn.getAttribute('data-copy');
-                navigator.clipboard.writeText(text);
-                document.getElementById('toast').classList.add('show');
-                setTimeout(() => document.getElementById('toast').classList.remove('show'), 1500);
-            });
-        });
-    }
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="https://deark.ru/privacy.html">Политика конфиденциальности</a>
+            <a href="https://deark.ru/terms.html">Пользовательское соглашение</a>
+        </div>
+        <p>Q© 2026 Все права защищены</p>
+    </footer>
 
-    function renderGuide(os) {
-        const data = guideData[os];
-        const content = `<div style="margin-bottom:24px"><h3 style="color: #39ff14;">📱 Приложение: ${data.app}</h3></div>
-            <div style="background:#1a1a1a; border-radius:20px; padding:20px">
-            <h4 style="margin-bottom:16px">Пошаговая инструкция:</h4>
-            <ol style="margin-left:20px;color:#ccc;line-height:1.8">${data.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
-            <div class="code-block"><span>📁 ${data.command}</span><button class="copy-btn" data-copy="${data.command}">Копировать</button></div>
-            <p style="color:#aaa;margin-top:16px">💡 Не получается? Напишите в поддержку — поможем!</p></div>`;
-        document.getElementById("tabContent").innerHTML = content;
-        attachCopyEvents();
-    }
-
-    function loadPage(page) {
-        currentPage = page;
-        document.getElementById('pageContainer').innerHTML = pages[page];
-        if (page === 'guide') {
-            renderGuide('android');
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderGuide(btn.getAttribute('data-os'));
-                });
-            });
-        }
-        if (page === 'home') {
-            const btn = document.getElementById('toTariffsBtn');
-            if (btn) btn.addEventListener('click', () => changePage('tariffs'));
-        }
-        document.querySelectorAll('.menu-item').forEach(item => {
-            if (item.getAttribute('data-page') === page) item.classList.add('active');
-            else item.classList.remove('active');
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function changePage(page) {
-        closeMenu();
-        loadPage(page);
-        history.pushState(null, '', `#${page}`);
-    }
-
-    function closeMenu() { document.getElementById('menu').classList.remove('open'); document.getElementById('menuOverlay').classList.remove('open'); }
-    function openMenu() { document.getElementById('menu').classList.add('open'); document.getElementById('menuOverlay').classList.add('open'); }
-
-    document.getElementById('burgerBtn').addEventListener('click', openMenu);
-    document.getElementById('menuOverlay').addEventListener('click', closeMenu);
-    document.querySelectorAll('.menu-item').forEach(btn => btn.addEventListener('click', () => changePage(btn.getAttribute('data-page'))));
-
-    const hash = window.location.hash.slice(1);
-    loadPage(hash && pages[hash] ? hash : 'home');
-    window.addEventListener('popstate', () => { const h = window.location.hash.slice(1); loadPage(h && pages[h] ? h : 'home'); });
-</script>
 </body>
 </html>
