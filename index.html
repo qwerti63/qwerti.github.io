@@ -57,16 +57,105 @@
             font-weight: bold;
         }
 
-        .nav a {
-            color: #888;
+        /* Гамбургер */
+        .hamburger {
+            width: 32px;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+            z-index: 200;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: #E53935;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger span:nth-child(1) { top: 0; }
+        .hamburger span:nth-child(2) { top: 10px; }
+        .hamburger span:nth-child(3) { top: 20px; }
+
+        .hamburger.active span:nth-child(1) {
+            top: 10px;
+            transform: rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            top: 10px;
+            transform: rotate(-45deg);
+        }
+
+        /* Меню */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100%;
+            background: #141414;
+            border-right: 1px solid #222;
+            z-index: 160;
+            padding: 100px 40px 40px;
+            transition: left 0.3s ease;
+        }
+
+        .menu.active {
+            left: 0;
+        }
+
+        .menu a {
+            display: block;
+            color: #fff;
             text-decoration: none;
-            margin-left: 32px;
-            font-size: 15px;
+            font-size: 18px;
+            padding: 16px 0;
+            border-bottom: 1px solid #222;
             transition: color 0.3s;
         }
 
-        .nav a:hover {
+        .menu a:hover {
             color: #E53935;
+        }
+
+        .menu-logo {
+            width: 60px;
+            height: 60px;
+            background: #E53935;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 40px;
         }
 
         /* Герой */
@@ -89,35 +178,27 @@
             transform: translate(-50%, -50%);
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(229, 57, 53, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(229, 57, 53, 0.12) 0%, transparent 70%);
             pointer-events: none;
         }
 
-        .hero-logo {
-            width: 120px;
-            height: 120px;
-            background: #E53935;
-            border-radius: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 64px;
-            font-weight: bold;
+        .hero-image {
+            width: 280px;
+            max-width: 80%;
+            border-radius: 24px;
             margin-bottom: 40px;
-            box-shadow: 0 20px 60px rgba(229, 57, 53, 0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
-            font-size: 56px;
+            font-size: 48px;
             font-weight: 800;
             margin-bottom: 16px;
             letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 span {
@@ -125,10 +206,12 @@
         }
 
         .hero p {
-            font-size: 20px;
+            font-size: 18px;
             color: #888;
             max-width: 500px;
             margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-download {
@@ -143,6 +226,8 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-download:hover {
@@ -168,9 +253,13 @@
             margin-bottom: 60px;
         }
 
+        .features h2 span {
+            color: #E53935;
+        }
+
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 32px;
         }
 
@@ -195,7 +284,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
+            color: #E53935;
+            font-weight: bold;
             margin-bottom: 20px;
         }
 
@@ -207,67 +298,6 @@
         .feature p {
             color: #888;
             font-size: 15px;
-        }
-
-        /* Скриншот */
-        .showcase {
-            padding: 100px 40px;
-            text-align: center;
-        }
-
-        .showcase h2 {
-            font-size: 36px;
-            margin-bottom: 60px;
-        }
-
-        .phone-mockup {
-            width: 300px;
-            height: 600px;
-            background: #141414;
-            border: 3px solid #333;
-            border-radius: 40px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-        }
-
-        .phone-screen {
-            width: 100%;
-            height: 100%;
-            background: #0D0D0D;
-            border-radius: 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .mockup-logo {
-            width: 80px;
-            height: 80px;
-            background: #E53935;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-        .mockup-input {
-            width: 80%;
-            height: 48px;
-            background: #1C1C1E;
-            border-radius: 16px;
-            border: 1px solid #333;
-        }
-
-        .mockup-btn {
-            width: 80%;
-            height: 48px;
-            background: #E53935;
-            border-radius: 24px;
         }
 
         /* Футер */
@@ -300,16 +330,25 @@
 
         /* Мобильная адаптация */
         @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
             .hero h1 {
-                font-size: 36px;
+                font-size: 32px;
             }
-            
-            .nav {
-                display: none;
+
+            .hero p {
+                font-size: 16px;
             }
-            
+
             .features {
                 padding: 60px 20px;
+            }
+
+            .menu {
+                width: 280px;
+                left: -280px;
             }
         }
     </style>
@@ -322,17 +361,25 @@
             <div class="logo-icon">Q</div>
             <div class="logo-text">Q</div>
         </div>
-        <nav class="nav">
-            <a href="#features">Возможности</a>
-            <a href="#privacy">Приватность</a>
-            <a href="https://deark.ru/privacy.html">Политика</a>
-            <a href="https://deark.ru/terms.html">Соглашение</a>
-        </nav>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </header>
+
+    <!-- Меню -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <nav class="menu">
+        <div class="menu-logo">Q</div>
+        <a href="#" onclick="toggleMenu()">Главная</a>
+        <a href="privacy.html" onclick="toggleMenu()">Политика конфиденциальности</a>
+        <a href="terms.html" onclick="toggleMenu()">Пользовательское соглашение</a>
+    </nav>
 
     <!-- Герой -->
     <section class="hero">
-        <div class="hero-logo">Q</div>
+        <img src="https://deark.ru/hero.jpg" alt="Q Messenger" class="hero-image" onerror="this.style.display='none'">
         <h1>Мессенджер <span>Q</span></h1>
         <p>Быстрый. Безопасный. Минималистичный. Общение без лишнего.</p>
         <a href="#" class="btn-download soon">Скоро в Google Play</a>
@@ -340,51 +387,37 @@
 
     <!-- Фичи -->
     <section class="features" id="features">
-        <h2>Почему <span style="color: #E53935">Q</span>?</h2>
+        <h2>Почему <span>Q</span>?</h2>
         <div class="features-grid">
             <div class="feature">
-                <div class="feature-icon">🔒</div>
+                <div class="feature-icon">S</div>
                 <h3>Безопасность</h3>
                 <p>Все сообщения шифруются. Никто кроме вас и собеседника не прочитает переписку.</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon">F</div>
                 <h3>Скорость</h3>
                 <p>Мгновенная доставка сообщений. Работает даже на медленном интернете.</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">🎨</div>
+                <div class="feature-icon">M</div>
                 <h3>Минимализм</h3>
-                <p>Ничего лишнего. Только вы и ваши контакты. Чистый тёмный интерфейс.</p>
+                <p>Ничего лишнего. Только вы и ваши контакты. Чистый темный интерфейс.</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">👤</div>
+                <div class="feature-icon">A</div>
                 <h3>Анонимность</h3>
                 <p>Регистрация по email. Не нужен номер телефона и личные данные.</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">☁️</div>
+                <div class="feature-icon">C</div>
                 <h3>Облако</h3>
                 <p>История сообщений хранится в облаке. Войди с любого устройства.</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">🔔</div>
+                <div class="feature-icon">N</div>
                 <h3>Уведомления</h3>
                 <p>Мгновенные push-уведомления. Не пропустите важное сообщение.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Скриншот -->
-    <section class="showcase">
-        <h2>Просто. Чисто. <span style="color: #E53935">Q</span>.</h2>
-        <div class="phone-mockup">
-            <div class="phone-screen">
-                <div class="mockup-logo">Q</div>
-                <div style="color: #888; font-size: 14px;">Добро пожаловать в Q</div>
-                <div class="mockup-input"></div>
-                <div class="mockup-input"></div>
-                <div class="mockup-btn"></div>
             </div>
         </div>
     </section>
@@ -392,11 +425,19 @@
     <!-- Футер -->
     <footer class="footer">
         <div class="footer-links">
-            <a href="https://deark.ru/privacy.html">Политика конфиденциальности</a>
-            <a href="https://deark.ru/terms.html">Пользовательское соглашение</a>
+            <a href="privacy.html">Политика конфиденциальности</a>
+            <a href="terms.html">Пользовательское соглашение</a>
         </div>
-        <p>Q© 2026 Все права защищены</p>
+        <p>Q 2026 Все права защищены</p>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.querySelector('.menu').classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
