@@ -5,23 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Q — Мессенджер нового поколения</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0D0D0D;
             color: #FFFFFF;
             line-height: 1.6;
-            overflow-x: hidden;
         }
 
-        /* Шапка */
         .header {
-            padding: 20px 40px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -36,31 +30,24 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: #E53935;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .logo-text {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
         }
 
-        /* Гамбургер */
         .hamburger {
-            width: 32px;
-            height: 24px;
+            width: 28px;
+            height: 20px;
             position: relative;
             cursor: pointer;
             z-index: 200;
@@ -69,38 +56,25 @@
         .hamburger span {
             display: block;
             position: absolute;
-            height: 3px;
+            height: 2.5px;
             width: 100%;
             background: #E53935;
-            border-radius: 3px;
+            border-radius: 2px;
             transition: all 0.3s ease;
         }
 
         .hamburger span:nth-child(1) { top: 0; }
-        .hamburger span:nth-child(2) { top: 10px; }
-        .hamburger span:nth-child(3) { top: 20px; }
+        .hamburger span:nth-child(2) { top: 9px; }
+        .hamburger span:nth-child(3) { top: 18px; }
 
-        .hamburger.active span:nth-child(1) {
-            top: 10px;
-            transform: rotate(45deg);
-        }
+        .hamburger.active span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
 
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            top: 10px;
-            transform: rotate(-45deg);
-        }
-
-        /* Меню */
         .menu-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             z-index: 150;
@@ -109,130 +83,78 @@
             transition: all 0.3s ease;
         }
 
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .menu-overlay.active { opacity: 1; visibility: visible; }
 
         .menu {
             position: fixed;
-            top: 0;
-            left: -320px;
-            width: 320px;
-            height: 100%;
+            top: 0; left: -300px;
+            width: 300px; height: 100%;
             background: #141414;
             border-right: 1px solid #222;
             z-index: 160;
-            padding: 100px 40px 40px;
+            padding: 80px 32px 32px;
             transition: left 0.3s ease;
         }
 
-        .menu.active {
-            left: 0;
-        }
+        .menu.active { left: 0; }
 
         .menu a {
             display: block;
             color: #fff;
             text-decoration: none;
-            font-size: 18px;
-            padding: 16px 0;
+            font-size: 16px;
+            padding: 14px 0;
             border-bottom: 1px solid #222;
             transition: color 0.3s;
         }
 
-        .menu a:hover {
-            color: #E53935;
-        }
+        .menu a:hover { color: #E53935; }
 
-        .menu-logo {
-            width: 60px;
-            height: 60px;
-            background: #E53935;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-
-        /* Герой */
         .hero {
-            min-height: 100vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 120px 20px 80px;
-            position: relative;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(229, 57, 53, 0.12) 0%, transparent 70%);
-            pointer-events: none;
+            padding: 100px 20px 50px;
         }
 
         .hero-image {
-            width: 280px;
-            max-width: 80%;
-            border-radius: 24px;
-            margin-bottom: 40px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            z-index: 1;
+            width: 220px;
+            max-width: 65%;
+            border-radius: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
         }
 
         .hero h1 {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 800;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 12px;
         }
 
-        .hero h1 span {
-            color: #E53935;
-        }
+        .hero h1 span { color: #E53935; }
 
         .hero p {
-            font-size: 18px;
+            font-size: 16px;
             color: #888;
-            max-width: 500px;
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 1;
+            max-width: 400px;
+            margin-bottom: 32px;
+            padding: 0 20px;
         }
 
         .btn-download {
             background: #E53935;
             color: white;
             border: none;
-            padding: 18px 48px;
-            border-radius: 30px;
-            font-size: 16px;
+            padding: 16px 40px;
+            border-radius: 28px;
+            font-size: 15px;
             font-weight: 600;
-            cursor: pointer;
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s;
-            position: relative;
-            z-index: 1;
-        }
-
-        .btn-download:hover {
-            background: #C62828;
-            transform: scale(1.05);
         }
 
         .btn-download.soon {
@@ -240,189 +162,136 @@
             cursor: not-allowed;
         }
 
-        /* Фичи */
         .features {
-            padding: 100px 40px;
-            max-width: 1200px;
+            padding: 60px 20px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         .features h2 {
             text-align: center;
-            font-size: 36px;
-            margin-bottom: 60px;
+            font-size: 28px;
+            margin-bottom: 40px;
         }
 
-        .features h2 span {
-            color: #E53935;
-        }
+        .features h2 span { color: #E53935; }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
         }
 
         .feature {
             background: #141414;
             border: 1px solid #222;
-            border-radius: 20px;
-            padding: 40px;
-            transition: all 0.3s;
-        }
-
-        .feature:hover {
-            border-color: #E53935;
-            transform: translateY(-4px);
+            border-radius: 16px;
+            padding: 28px;
         }
 
         .feature-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: rgba(229, 57, 53, 0.1);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             color: #E53935;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .feature h3 {
-            font-size: 20px;
-            margin-bottom: 12px;
+            font-size: 17px;
+            margin-bottom: 8px;
         }
 
         .feature p {
             color: #888;
-            font-size: 15px;
+            font-size: 14px;
         }
 
-        /* Футер */
         .footer {
             border-top: 1px solid #222;
-            padding: 60px 40px;
+            padding: 40px 20px;
             text-align: center;
         }
 
-        .footer-links {
-            margin-bottom: 24px;
-        }
+        .footer-links { margin-bottom: 16px; }
 
         .footer-links a {
             color: #888;
             text-decoration: none;
-            margin: 0 16px;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #E53935;
-        }
-
-        .footer p {
-            color: #555;
+            margin: 0 12px;
             font-size: 13px;
         }
 
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            .header {
-                padding: 16px 20px;
-            }
-
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .features {
-                padding: 60px 20px;
-            }
-
-            .menu {
-                width: 280px;
-                left: -280px;
-            }
-        }
+        .footer p { color: #555; font-size: 12px; }
     </style>
 </head>
 <body>
-
-    <!-- Шапка -->
     <header class="header">
         <div class="logo">
             <div class="logo-icon">Q</div>
-            <div class="logo-text">Q</div>
+            <span style="font-weight:bold">Q</span>
         </div>
         <div class="hamburger" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
     </header>
 
-    <!-- Меню -->
     <div class="menu-overlay" onclick="toggleMenu()"></div>
     <nav class="menu">
-        <div class="menu-logo">Q</div>
         <a href="#" onclick="toggleMenu()">Главная</a>
         <a href="privacy.html" onclick="toggleMenu()">Политика конфиденциальности</a>
         <a href="terms.html" onclick="toggleMenu()">Пользовательское соглашение</a>
     </nav>
 
-    <!-- Герой -->
     <section class="hero">
-        <img src="https://deark.ru/IMG_20260705_150102_235.jpg" alt="Q Messenger" class="hero-image" onerror="this.style.display='none'">
+        <img src="IMG_20260705_150102_235.jpg" alt="Q Messenger" class="hero-image">
         <h1>Мессенджер <span>Q</span></h1>
         <p>Быстрый. Безопасный. Минималистичный. Общение без лишнего.</p>
         <a href="#" class="btn-download soon">Скоро в Google Play</a>
     </section>
 
-    <!-- Фичи -->
-    <section class="features" id="features">
+    <section class="features">
         <h2>Почему <span>Q</span>?</h2>
         <div class="features-grid">
             <div class="feature">
                 <div class="feature-icon">S</div>
                 <h3>Безопасность</h3>
-                <p>Все сообщения шифруются. Никто кроме вас и собеседника не прочитает переписку.</p>
+                <p>Все сообщения шифруются end-to-end.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">F</div>
                 <h3>Скорость</h3>
-                <p>Мгновенная доставка сообщений. Работает даже на медленном интернете.</p>
+                <p>Мгновенная доставка сообщений.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">M</div>
                 <h3>Минимализм</h3>
-                <p>Ничего лишнего. Только вы и ваши контакты. Чистый темный интерфейс.</p>
+                <p>Чистый темный интерфейс без мусора.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">A</div>
                 <h3>Анонимность</h3>
-                <p>Регистрация по email. Не нужен номер телефона и личные данные.</p>
+                <p>Регистрация только по email.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">C</div>
                 <h3>Облако</h3>
-                <p>История сообщений хранится в облаке. Войди с любого устройства.</p>
+                <p>История на всех устройствах.</p>
             </div>
             <div class="feature">
                 <div class="feature-icon">N</div>
                 <h3>Уведомления</h3>
-                <p>Мгновенные push-уведомления. Не пропустите важное сообщение.</p>
+                <p>Мгновенные push-уведомления.</p>
             </div>
         </div>
     </section>
 
-    <!-- Футер -->
     <footer class="footer">
         <div class="footer-links">
             <a href="privacy.html">Политика конфиденциальности</a>
@@ -438,6 +307,5 @@
             document.querySelector('.menu').classList.toggle('active');
         }
     </script>
-
 </body>
 </html>
